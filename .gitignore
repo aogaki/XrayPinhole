@@ -1,0 +1,10 @@
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+XrayPinCam
+G4History.macro
+Makefile
+*~
+result*.root
+tmp.*
+Makefile
