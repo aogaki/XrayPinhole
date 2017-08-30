@@ -22,6 +22,12 @@ public:
 private:
    G4ParticleGun *fParticleGun;
 
+   void GenDivergence();
+   G4ThreeVector fDivergence;
+
+   void GenEnergy();
+   G4double fEnergy;
+   
 };
 
 #endif

@@ -7,7 +7,8 @@
 
 XPEventAction::XPEventAction()
    : G4UserEventAction(),
-     fHitsCollectionID(-1)
+     fHCScreenID(-1),
+     fHCMirrorID(-1)
 {}
 
 XPEventAction::~XPEventAction()
@@ -36,13 +37,38 @@ void XPEventAction::BeginOfEventAction(const G4Event *)
 
 void XPEventAction::EndOfEventAction(const G4Event *event)
 {
-   if (fHitsCollectionID == -1)
-      fHitsCollectionID = G4SDManager::GetSDMpointer()->GetCollectionID("HC");
+   if (fHCScreenID == -1)
+      fHCScreenID = G4SDManager::GetSDMpointer()->GetCollectionID("ScreenHC");
+
+   G4int eventID = event->GetEventID();
+
+   G4AnalysisManager *anaMan = G4AnalysisManager::Instance();
    
-   XPHitsCollection *hc = GetHitsCollection(fHitsCollectionID, event);
+   XPHitsCollection *hc = GetHitsCollection(fHCScreenID, event);
    const G4int kHit = hc->entries();
    for (G4int iHit = 0; iHit < kHit; iHit++) {
       XPHit *newHit = (*hc)[iHit];
+
+      anaMan->FillNtupleIColumn(0, 0, eventID); // EventID
+
+      G4int trackID = newHit->GetTrackID();
+      anaMan->FillNtupleIColumn(0, 1, trackID);
+
+      G4int PDGCode = newHit->GetPDGCode();
+      anaMan->FillNtupleIColumn(0, 2, PDGCode);
+
+      G4double depositEnergy = newHit->GetDepositEnergy();
+      anaMan->FillNtupleDColumn(0, 3, depositEnergy);
+
+      G4String vertexName = newHit->GetVertexName();
+      anaMan->FillNtupleSColumn(0, 4, vertexName);
+
+      G4ThreeVector position = newHit->GetPosition();
+      anaMan->FillNtupleDColumn(0, 5, position.x());
+      anaMan->FillNtupleDColumn(0, 6, position.y());
+      anaMan->FillNtupleDColumn(0, 7, position.z());
+
+      anaMan->AddNtupleRow(0);
    }
 
 }

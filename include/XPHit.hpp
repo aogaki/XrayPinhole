@@ -21,9 +21,27 @@ public:
    inline void  operator delete(void *);
 
    // add setter/getter methods
+   void SetTrackID(G4int id) {fTrackID = id;};
+   G4int GetTrackID() {return fTrackID;};
 
+   void SetPDGCode(G4int code) {fPDGCode = code;};
+   G4int GetPDGCode() {return fPDGCode;};
+
+   void SetDepositEnergy(G4double ene) {fDepositEnergy = ene;};
+   G4double GetDepositEnergy() {return fDepositEnergy;};
+
+   void SetVertexName(G4String name) {fVertexName = name;};
+   G4String GetVertexName() {return fVertexName;};
+   
+   void SetPosition(G4ThreeVector pos) {fPosition = pos;};
+   G4ThreeVector GetPosition() {return fPosition;};
+   
 private:
-
+   G4int fTrackID;
+   G4int fPDGCode;
+   G4double fDepositEnergy;
+   G4String fVertexName;
+   G4ThreeVector fPosition;
 };
 
 typedef G4THitsCollection<XPHit> XPHitsCollection;

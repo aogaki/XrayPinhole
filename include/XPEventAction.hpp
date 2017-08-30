@@ -17,7 +17,8 @@ public:
 private:
    XPHitsCollection *GetHitsCollection(G4int hcID, const G4Event *event) const;
    
-   G4int fHitsCollectionID;
+   G4int fHCScreenID;
+   G4int fHCMirrorID;
 };
 
 #endif

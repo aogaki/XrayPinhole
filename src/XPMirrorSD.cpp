@@ -34,5 +34,28 @@ void XPSD::Initialize(G4HCofThisEvent *hce)
 
 G4bool XPSD::ProcessHits(G4Step *step, G4TouchableHistory */*history*/)
 {
+   G4double depositEnergy = step->GetTotalEnergyDeposit();
+   if(depositEnergy == 0.) return false;
+
+   XPHit *newHit = new XPHit();
+   newHit->SetDepositEnergy(depositEnergy);
+   
+   G4Track *track = step->GetTrack();   
+   G4String vertexName = track->GetLogicalVolumeAtVertex()->GetName();
+   newHit->SetVertexName(vertexName);
+   
+   G4ParticleDefinition *particle = track->GetDefinition();
+   G4int pdgCode = particle->GetPDGEncoding();
+   newHit->SetPDGCode(pdgCode);
+
+   G4int trackID = track->GetTrackID();
+   newHit->SetTrackID(trackID);
+   
+   G4StepPoint *postStepPoint = step->GetPostStepPoint();
+   G4ThreeVector position =  postStepPoint->GetPosition();
+   newHit->SetPosition(position);
+
+   fHitsCollection->insert(newHit);
+   
    return true;
 }

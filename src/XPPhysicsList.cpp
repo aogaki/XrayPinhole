@@ -8,6 +8,7 @@
 #include <G4IonQMDPhysics.hh>
 #include <G4IonElasticPhysics.hh>
 #include <G4IonBinaryCascadePhysics.hh>
+#include <G4OpticalPhysics.hh>
 
 #include "XPPhysicsList.hpp"
 
@@ -39,6 +40,9 @@ XPPhysicsList::XPPhysicsList()
    // Ion Physics
    RegisterPhysics(new G4IonQMDPhysics(verbose));
    RegisterPhysics(new G4IonElasticPhysics(verbose));
+
+   // Optical for X-ray
+   RegisterPhysics(new G4OpticalPhysics(verbose));
 }
 
 XPPhysicsList::~XPPhysicsList()
