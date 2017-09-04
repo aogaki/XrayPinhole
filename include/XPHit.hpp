@@ -30,18 +30,26 @@ public:
    void SetDepositEnergy(G4double ene) {fDepositEnergy = ene;};
    G4double GetDepositEnergy() {return fDepositEnergy;};
 
+   void SetKineticEnergy(G4double ene) {fKineticEnergy = ene;};
+   G4double GetKineticEnergy() {return fKineticEnergy;};
+
    void SetVertexName(G4String name) {fVertexName = name;};
    G4String GetVertexName() {return fVertexName;};
    
    void SetPosition(G4ThreeVector pos) {fPosition = pos;};
    G4ThreeVector GetPosition() {return fPosition;};
    
+   void SetMomentum(G4ThreeVector pos) {fMomentum = pos;};
+   G4ThreeVector GetMomentum() {return fMomentum;};
+   
 private:
    G4int fTrackID;
    G4int fPDGCode;
    G4double fDepositEnergy;
+   G4double fKineticEnergy;
    G4String fVertexName;
    G4ThreeVector fPosition;
+   G4ThreeVector fMomentum;
 };
 
 typedef G4THitsCollection<XPHit> XPHitsCollection;

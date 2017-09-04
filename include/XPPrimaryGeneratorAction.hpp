@@ -27,6 +27,9 @@ private:
 
    void GenEnergy();
    G4double fEnergy;
+
+   void GenPosition();
+   G4ThreeVector fPosition;
    
 };
 

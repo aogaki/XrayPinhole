@@ -22,11 +22,12 @@ XPPrimaryGeneratorAction::XPPrimaryGeneratorAction()
 
    fEnergy = 10.*keV;
    fDivergence = G4ThreeVector(0., 0., 1.);
+   fPosition = G4ThreeVector(0., 0., 0.);
    
    auto particleTable = G4ParticleTable::GetParticleTable();
    auto particle = particleTable->FindParticle("gamma");
    fParticleGun->SetParticleDefinition(particle);
-   fParticleGun->SetParticlePosition(G4ThreeVector(0., 0., 0.));
+   fParticleGun->SetParticlePosition(fPosition);
    fParticleGun->SetParticleEnergy(fEnergy);
    fParticleGun->SetParticleMomentumDirection(fDivergence);
 }
@@ -41,9 +42,12 @@ void XPPrimaryGeneratorAction::GeneratePrimaries(G4Event *event)
    GenEnergy();
    fParticleGun->SetParticleEnergy(fEnergy);
 
-   GenDivergence();
-   fParticleGun->SetParticleMomentumDirection(fDivergence);
+   //GenDivergence();
+   //fParticleGun->SetParticleMomentumDirection(fDivergence);
 
+   GenPosition();
+   fParticleGun->SetParticlePosition(fPosition);
+   
    fParticleGun->GeneratePrimaryVertex(event);
 
    G4AutoLock lock(&mutexInPGA);
@@ -63,6 +67,22 @@ void XPPrimaryGeneratorAction::GenDivergence()
 
 void XPPrimaryGeneratorAction::GenEnergy()
 {
-   //fEnergy = (100. * G4UniformRand())*MeV;
-   fEnergy = CLHEP::RandExponential::shoot(20)*MeV;
+   constexpr G4double limit = 100.*MeV;
+   while(1){
+      //fEnergy = (100. * G4UniformRand())*MeV;
+      fEnergy = CLHEP::RandExponential::shoot(20)*MeV;
+      if(fEnergy <= limit)
+         break;
+   }
+}
+
+void XPPrimaryGeneratorAction::GenPosition()
+{
+   constexpr G4double radMax = 5.*um;
+   G4double r = sqrt(G4UniformRand());
+   G4double theta = G4UniformRand()*CLHEP::twopi;
+   G4double x = radMax * r * cos(theta);
+   G4double y = radMax * r * sin(theta);
+   G4double z = 0.;
+   fPosition = G4ThreeVector(x, y, z);
 }

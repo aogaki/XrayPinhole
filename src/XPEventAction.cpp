@@ -37,17 +37,18 @@ void XPEventAction::BeginOfEventAction(const G4Event *)
 
 void XPEventAction::EndOfEventAction(const G4Event *event)
 {
-   if (fHCScreenID == -1)
-      fHCScreenID = G4SDManager::GetSDMpointer()->GetCollectionID("ScreenHC");
-
    G4int eventID = event->GetEventID();
 
    G4AnalysisManager *anaMan = G4AnalysisManager::Instance();
-   
-   XPHitsCollection *hc = GetHitsCollection(fHCScreenID, event);
-   const G4int kHit = hc->entries();
-   for (G4int iHit = 0; iHit < kHit; iHit++) {
-      XPHit *newHit = (*hc)[iHit];
+
+   // Get the CsI screen info
+   if (fHCScreenID == -1)
+      fHCScreenID = G4SDManager::GetSDMpointer()->GetCollectionID("ScreenHC");
+
+   XPHitsCollection *hcScreen = GetHitsCollection(fHCScreenID, event);
+   const G4int kScreenHit = hcScreen->entries();
+   for (G4int iHit = 0; iHit < kScreenHit; iHit++) {
+      XPHit *newHit = (*hcScreen)[iHit];
 
       anaMan->FillNtupleIColumn(0, 0, eventID); // EventID
 
@@ -69,6 +70,36 @@ void XPEventAction::EndOfEventAction(const G4Event *event)
       anaMan->FillNtupleDColumn(0, 7, position.z());
 
       anaMan->AddNtupleRow(0);
+   }
+
+   // Get the mirror info
+   if (fHCMirrorID == -1)
+      fHCMirrorID = G4SDManager::GetSDMpointer()->GetCollectionID("MirrorHC");
+
+   XPHitsCollection *hcMirror = GetHitsCollection(fHCMirrorID, event);
+   const G4int kMirrorHit = hcMirror->entries();
+   for (G4int iHit = 0; iHit < kMirrorHit; iHit++) {
+      XPHit *newHit = (*hcMirror)[iHit];
+
+      anaMan->FillNtupleIColumn(1, 0, eventID); // EventID
+
+      G4int trackID = newHit->GetTrackID();
+      anaMan->FillNtupleIColumn(1, 1, trackID);
+
+      G4double kineticEnergy = newHit->GetKineticEnergy();
+      anaMan->FillNtupleDColumn(1, 2, kineticEnergy);
+
+      G4ThreeVector position = newHit->GetPosition();
+      anaMan->FillNtupleDColumn(1, 3, position.x());
+      anaMan->FillNtupleDColumn(1, 4, position.y());
+      anaMan->FillNtupleDColumn(1, 5, position.z());
+
+      G4ThreeVector momentum = newHit->GetMomentum();
+      anaMan->FillNtupleDColumn(1, 6, momentum.x());
+      anaMan->FillNtupleDColumn(1, 7, momentum.y());
+      anaMan->FillNtupleDColumn(1, 8, momentum.z());
+
+      anaMan->AddNtupleRow(1);
    }
 
 }

@@ -18,6 +18,7 @@
 
 #include "XPDetectorConstruction.hpp"
 #include "XPScreenSD.hpp"
+#include "XPMirrorSD.hpp"
 #include "XPMagneticField.hpp"
 
 
@@ -53,8 +54,8 @@ void XPDetectorConstruction::SetParameters()
 
    fFilter1D = 200.*mm;
 
-   //fPinholeT = 50.*um;
-   fPinholeT = 5.*mm;
+   fPinholeT = 50.*um;
+   //fPinholeT = 5.*mm;
    fPinholeD = 5.*um;
    
    fBlockT = 5.*mm;
@@ -143,21 +144,6 @@ G4VPhysicalVolume *XPDetectorConstruction::Construct()
                      false, 0, fCheckOverlap);
 
    return worldPV;
-}
-
-void XPDetectorConstruction::ConstructSDandField()
-{
-   // Sensitive Detectors
-   G4VSensitiveDetector *SD = new XPScreenSD("ScreenSD", "ScreenHC");
-   G4SDManager::GetSDMpointer()->AddNewDetector(SD);
-   
-   G4LogicalVolumeStore *lvStore = G4LogicalVolumeStore::GetInstance();
-   for(auto &&lv: *lvStore){
-      if(lv->GetName().contains("Screen"))
-         SetSensitiveDetector(lv->GetName(), SD);
-   }
-
-   ConstructBField();
 }
 
 G4LogicalVolume *XPDetectorConstruction::GetCamera()
@@ -376,6 +362,26 @@ G4LogicalVolume *XPDetectorConstruction::GetMagnet()
 
    return magnetLV;
    
+}
+
+void XPDetectorConstruction::ConstructSDandField()
+{
+   // Sensitive Detectors
+   G4VSensitiveDetector *screenSD = new XPScreenSD("ScreenSD", "ScreenHC");
+   G4SDManager::GetSDMpointer()->AddNewDetector(screenSD);
+   
+   G4VSensitiveDetector *mirrorSD = new XPMirrorSD("MirrorSD", "MirrorHC");
+   G4SDManager::GetSDMpointer()->AddNewDetector(mirrorSD);
+   
+   G4LogicalVolumeStore *lvStore = G4LogicalVolumeStore::GetInstance();
+   for(auto &&lv: *lvStore){
+      if(lv->GetName().contains("Screen"))
+         SetSensitiveDetector(lv->GetName(), screenSD);
+      if(lv->GetName().contains("Coating")) // Mirror is better?
+         SetSensitiveDetector(lv->GetName(), mirrorSD);
+   }
+
+   ConstructBField();
 }
 
 void XPDetectorConstruction::ConstructBField()

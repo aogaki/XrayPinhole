@@ -5,6 +5,12 @@ XrayPinCam
 G4History.macro
 Makefile
 *~
+*.so
+*.d
+*.pcm
 result*.root
 tmp.*
 Makefile
+compile_commands.json
+Analyze/
+

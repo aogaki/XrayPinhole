@@ -8,21 +8,21 @@
 #include <G4Material.hh>
 #include <G4VProcess.hh>
 
-#include "XPSD.hpp"
+#include "XPScreenSD.hpp"
 #include "XPHit.hpp"
 
 
-XPSD::XPSD(const G4String &name,
+XPScreenSD::XPScreenSD(const G4String &name,
              const G4String &hitsCollectionName)
    : G4VSensitiveDetector(name)
 {
    collectionName.insert(hitsCollectionName);
 }
 
-XPSD::~XPSD()
+XPScreenSD::~XPScreenSD()
 {}
 
-void XPSD::Initialize(G4HCofThisEvent *hce)
+void XPScreenSD::Initialize(G4HCofThisEvent *hce)
 {
    fHitsCollection
       = new XPHitsCollection(SensitiveDetectorName, collectionName[0]);
@@ -32,7 +32,7 @@ void XPSD::Initialize(G4HCofThisEvent *hce)
    hce->AddHitsCollection(hcID, fHitsCollection);
 }
 
-G4bool XPSD::ProcessHits(G4Step *step, G4TouchableHistory */*history*/)
+G4bool XPScreenSD::ProcessHits(G4Step *step, G4TouchableHistory */*history*/)
 {
    G4double depositEnergy = step->GetTotalEnergyDeposit();
    if(depositEnergy == 0.) return false;

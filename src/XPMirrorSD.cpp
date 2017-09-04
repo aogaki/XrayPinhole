@@ -8,21 +8,21 @@
 #include <G4Material.hh>
 #include <G4VProcess.hh>
 
-#include "XPSD.hpp"
+#include "XPMirrorSD.hpp"
 #include "XPHit.hpp"
 
 
-XPSD::XPSD(const G4String &name,
+XPMirrorSD::XPMirrorSD(const G4String &name,
              const G4String &hitsCollectionName)
    : G4VSensitiveDetector(name)
 {
    collectionName.insert(hitsCollectionName);
 }
 
-XPSD::~XPSD()
+XPMirrorSD::~XPMirrorSD()
 {}
 
-void XPSD::Initialize(G4HCofThisEvent *hce)
+void XPMirrorSD::Initialize(G4HCofThisEvent *hce)
 {
    fHitsCollection
       = new XPHitsCollection(SensitiveDetectorName, collectionName[0]);
@@ -32,30 +32,38 @@ void XPSD::Initialize(G4HCofThisEvent *hce)
    hce->AddHitsCollection(hcID, fHitsCollection);
 }
 
-G4bool XPSD::ProcessHits(G4Step *step, G4TouchableHistory */*history*/)
+G4bool XPMirrorSD::ProcessHits(G4Step *step, G4TouchableHistory */*history*/)
 {
-   G4double depositEnergy = step->GetTotalEnergyDeposit();
-   if(depositEnergy == 0.) return false;
+   // Checking enter or not
+   G4StepPoint *preStepPoint = step->GetPreStepPoint();
+   if(preStepPoint->GetStepStatus() != fGeomBoundary)
+      return false;
 
-   XPHit *newHit = new XPHit();
-   newHit->SetDepositEnergy(depositEnergy);
-   
-   G4Track *track = step->GetTrack();   
-   G4String vertexName = track->GetLogicalVolumeAtVertex()->GetName();
-   newHit->SetVertexName(vertexName);
-   
+   // Checking the direction
+   G4ThreeVector momentum =  preStepPoint->GetMomentum();
+   if(momentum.y() > 0.)
+      return false;
+
+   // Checking gamma or not
+   G4Track *track = step->GetTrack();
    G4ParticleDefinition *particle = track->GetDefinition();
    G4int pdgCode = particle->GetPDGEncoding();
-   newHit->SetPDGCode(pdgCode);
+   if(pdgCode != 22) // 22 is gamma
+      return false;
+
+   XPHit *newHit = new XPHit();
 
    G4int trackID = track->GetTrackID();
    newHit->SetTrackID(trackID);
-   
-   G4StepPoint *postStepPoint = step->GetPostStepPoint();
-   G4ThreeVector position =  postStepPoint->GetPosition();
-   newHit->SetPosition(position);
 
-   fHitsCollection->insert(newHit);
+   G4double kineticEnergy = preStepPoint->GetKineticEnergy();
+   newHit->SetKineticEnergy(kineticEnergy);
    
+   newHit->SetMomentum(momentum);
+
+   G4ThreeVector position =  preStepPoint->GetPosition();
+   newHit->SetPosition(position);
+   
+   fHitsCollection->insert(newHit);
    return true;
 }

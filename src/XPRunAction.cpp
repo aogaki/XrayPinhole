@@ -23,6 +23,19 @@ XPRunAction::XPRunAction()
    anaMan->CreateNtupleDColumn(0, "y");
    anaMan->CreateNtupleDColumn(0, "z");
 
+   anaMan->CreateNtuple("Mirror", "incident gamma information");
+   anaMan->CreateNtupleIColumn(1, "EventID");
+   anaMan->CreateNtupleIColumn(1, "TrackID");
+   anaMan->CreateNtupleDColumn(1, "KineticEnergy");
+
+   anaMan->CreateNtupleDColumn(1, "x");
+   anaMan->CreateNtupleDColumn(1, "y");
+   anaMan->CreateNtupleDColumn(1, "z");
+
+   anaMan->CreateNtupleDColumn(1, "Px");
+   anaMan->CreateNtupleDColumn(1, "Py");
+   anaMan->CreateNtupleDColumn(1, "Pz");
+
    anaMan->FinishNtuple();
 }
 
