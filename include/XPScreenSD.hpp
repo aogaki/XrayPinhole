@@ -15,15 +15,14 @@ class G4TouchableHistory;
 class XPScreenSD: public G4VSensitiveDetector
 {
 public:
-   XPScreenSD(const G4String &name,
-            const G4String &hitsCollectionName);
-   virtual ~XPScreenSD();
+  XPScreenSD(const G4String &name, const G4String &hitsCollectionName);
+  virtual ~XPScreenSD();
 
-   virtual void Initialize(G4HCofThisEvent *hce);
-   virtual G4bool ProcessHits(G4Step *step, G4TouchableHistory *history);
+  virtual void Initialize(G4HCofThisEvent *hce);
+  virtual G4bool ProcessHits(G4Step *step, G4TouchableHistory *history);
 
 private:
-   XPHitsCollection *fHitsCollection;
+  XPHitsCollection *fHitsCollection;
 };
 
 #endif
